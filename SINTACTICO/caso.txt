@@ -1,3 +1,14 @@
-proceso mi_proceso
-    Escribir 3+1*7;
-finproces
+SubProceso variable_de_retorno <- mi_funcion ( Argumentos )
+    //comandos
+FinSubProceso
+
+Proceso mi_proceso
+    mi_funcion(Argumentos);
+finproceso
+
+
+
+
+
+
+

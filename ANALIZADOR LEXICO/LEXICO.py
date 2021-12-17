@@ -359,7 +359,7 @@ def solve(linea, fila, columna):
             return False
         
 
-file = open('caso.txt', 'r')
+file = open('./ANALIZADOR LEXICO/caso.txt', 'r')
 flag= True
 fila = 1
 

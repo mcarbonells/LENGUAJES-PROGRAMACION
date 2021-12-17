@@ -5,7 +5,7 @@ keywords = {"proceso", "algoritmo", "finproceso", "finalgoritmo", "leer", "escri
 "cadena", "verdadero", "falso", "dimension", "mientras", "finsi", "si", "entonces",
 "sino", "dimension", "para", "hasta", "con", "paso", "hacer", "finpara", "borrar", "pantalla",
 "esperar", "tecla", "segundos", "milisegundos", "segun", "de", "otro", "modo", "finsegun", "finmientras",
-"repetir", "que", "subproceso", "finsubproceso", "finfuncion", "funcion", "limpiar", "otro"}
+"repetir", "que", "subproceso", "finsubproceso", "finfuncion", "funcion", "limpiar", "otro", "caso"}
 
 operators={
     '~': "token_neg",
@@ -61,7 +61,7 @@ def writeW(fila, columna, word):
     word = str(word).lower()
     for reserved in keywords:
         if reserved == word:
-            tokenList.append('reserved')
+            tokenList.append([word, fila, columna])
             flag = False
     if flag:
         try: 
@@ -70,9 +70,9 @@ def writeW(fila, columna, word):
         except KeyError:
             answer = False
         if answer:
-            tokenList.append(operators[word])
+            tokenList.append([operators[word], fila, columna])
         else: 
-            tokenList.append('id')
+            tokenList.append(['identificador', fila, columna])
 
 def case1(linea, fila, columna, word): 
     columna1= columna+1
@@ -104,7 +104,7 @@ def case1(linea, fila, columna, word):
                     writeW(fila, columna1, word)
                     return [linea, fila, columna, 0]
                 else:
-                    tokenList.append('Error')
+                    tokenList.append(['Error', fila, columna1])
                     return [linea, fila, columna, -2]
             else:
                 try: 
@@ -114,11 +114,11 @@ def case1(linea, fila, columna, word):
                     answer1 = False
                 if answer1:
                     if word == '':
-                        tokenList.append('Error') 
+                        tokenList.append(['Error', fila, columna +1]) 
                         return [linea, fila, columna, -2] 
                     else:
                         writeW(fila, columna1, word)
-                        tokenList.append('Error')
+                        tokenList.append(['Error', fila, columna +1])
                         return [linea, fila, columna, -2] 
                 else:
                     if linea[columna] == ' ':
@@ -148,13 +148,13 @@ def case2(linea, fila, columna, word, type):
                 if  type=='token_entero':
                     if linea[columna] == '.' or linea[columna] == ' ' or  linea[columna] == '\n' or linea[columna] == '\r' or linea[columna] == ';' or linea[columna] == ',':
                         if linea[columna] == '\n' or linea[columna] == '\r':
-                            tokenList.append(type)
+                            tokenList.append([type, fila, columna1])
                             return [linea, fila, columna + 1, -1]
                         elif linea[columna] == ' ':
-                            tokenList.append(type)
+                            tokenList.append([type, fila, columna1])
                             return [linea, fila, columna + 1, 0]
                         elif linea[columna] == ';' or linea[columna] == ',':
-                            tokenList.append(type)
+                            tokenList.append([type, fila, columna1])
                             return [linea, fila, columna, 0]
                         else:
                             try: 
@@ -167,58 +167,58 @@ def case2(linea, fila, columna, word, type):
                                 type = 'token_real'
                                 columna = columna + 1
                             else:
-                                tokenList.append(type)
-                                tokenList.append('Error')
+                                tokenList.append([type, fila, columna1])
+                                tokenList.append(['Error', fila, columna1])
                                 return [linea, fila, columna, -2]   
                     elif linea[columna] == '+' or linea[columna] == '-' or linea[columna] == '/' or linea[columna] == '*' or linea[columna] == '^' or linea[columna]== '%':
-                        tokenList.append(type)
+                        tokenList.append([type, fila, columna1])
                         return [linea, fila, columna, 0]
                     elif linea[columna] == '<' or linea[columna] == '>' or linea[columna] == '=' or linea[columna] == '>=' or linea[columna] == '<=' or linea[columna]== '<>':
-                        tokenList.append(type)
+                        tokenList.append([type, fila, columna1])
                         return [linea, fila, columna, 0]
                     elif linea[columna] == '&' or linea[columna] == '|' or linea[columna] == '~':
-                        tokenList.append(type)
+                        tokenList.append([type, fila, columna1])
                         return [linea, fila, columna, 0]
                     elif linea[columna] == '(' or linea[columna] == ')' or linea[columna] == '[' or linea[columna] == ']'   or linea[columna] == '"' or linea[columna] == "'" or linea[columna] == ':':
-                        tokenList.append(type)
+                        tokenList.append([type, fila, columna1])
                         return [linea, fila, columna, 0]
                     else:
                         
-                        tokenList.append('Error')
+                        tokenList.append(['Error', fila, columna1])
                         return [linea, fila, columna, -2]
                 elif linea[columna] == ';' or linea[columna] == ',':
-                    tokenList.append(type)
+                    tokenList.append([type, fila, columna1])
                     return [linea, fila, columna, 0]  
                 elif linea[columna] == ' ':
-                    tokenList.append(type)
+                    tokenList.append([type, fila, columna1])
                     return [linea, fila, columna + 1, 0]
                 elif linea[columna] == '\n' or linea[columna] == '\r':
-                    tokenList.append(type)
+                    tokenList.append([type, fila, columna1])
                     return [linea, fila, columna + 1, -1]
                 elif linea[columna] == '+' or linea[columna] == '-' or linea[columna] == '/' or linea[columna] == '*' or linea[columna] == '^' or linea[columna]== '%':
-                    tokenList.append(type)
+                    tokenList.append([type, fila, columna1])
                     return [linea, fila, columna, 0]
                 elif linea[columna] == '<' or linea[columna] == '>' or linea[columna] == '=' or linea[columna] == '>=' or linea[columna] == '<=' or linea[columna]== '<>':
-                    tokenList.append(type)
+                    tokenList.append([type, fila, columna1])
                     return [linea, fila, columna, 0]
                 elif linea[columna] == '&' or linea[columna] == '|' or linea[columna] == '~':
-                    tokenList.append(type)
+                    tokenList.append([type, fila, columna1])
                     return [linea, fila, columna, 0]
                 elif linea[columna] == '(' or linea[columna] == ')' or linea[columna] == '[' or linea[columna] == ']'   or linea[columna] == '"' or linea[columna] == "'" or linea[columna] == ':':
-                    tokenList.append(type)
+                    tokenList.append([type, fila, columna1])
                     return [linea, fila, columna, 0]
                 else:
-                    tokenList.append('Error')
+                    tokenList.append(['Error', fila, columna1])
                     return [linea, fila, columna, -2]
                 
                 if linea[columna] == ' ':
-                    tokenList.append(type)
+                    tokenList.append([type, fila, columna1])
                     return [linea, fila, columna + 1, 0]   
             else:
                 word=word+linea[columna] 
                 columna = columna + 1 
         else: 
-            tokenList.append(type)
+            tokenList.append([type, fila, columna1])
             return [linea, fila, columna, -1] 
                   
 
@@ -227,10 +227,10 @@ def case3(linea, fila, columna, word):
     while True :
         if len(linea) > columna:
             if linea[columna]==' ':
-                tokenList.append(operators[str(word).lower()])
+                tokenList.append([operators[str(word).lower()], fila, columna1])
                 return [linea, fila, columna + 1, 0]
             elif linea[columna] == '\n' or linea[columna] == '\r':
-                tokenList.append(operators[str(word).lower()])
+                tokenList.append([operators[str(word).lower()],fila, columna1])
                 return [linea, fila, columna + 1, -1]
             else: 
                 try:
@@ -249,17 +249,17 @@ def case3(linea, fila, columna, word):
                     except KeyError:
                         answer1 = True
                     if answer1:
-                        tokenList.append(operators[str(word).lower()])
+                        tokenList.append([operators[str(word).lower()], fila, columna1])
                         return [linea, fila, columna, 0] 
                     else:
-                        if linea[columna-1] == ';' or linea[columna-1] == ',':
-                            tokenList.append(operators[word])
+                        if linea[columna-1] == ';' or linea[columna-1] == ',' or linea[columna] == '"':
+                            tokenList.append([operators[word], fila, columna1])
                             return [linea, fila, columna, 0]
                         else: 
-                            tokenList.append('Error')
+                            tokenList.append(['Error', fila, columna+1])
                             return [linea, fila, columna, -2] 
         else:
-            tokenList.append(operators[word])
+            tokenList.append([operators[word], fila, columna1])
             return [linea, fila, columna + 1, -1] 
                 
 
@@ -268,14 +268,14 @@ def case5(linea, fila, columna, word):
     while True :
         if len(linea) > columna:
             if linea[columna] == linea[columna] == '"' or linea[columna] == "'":
-                tokenList.append('token_cadena')
+                tokenList.append(['token_cadena', fila, columna1])
                 return [linea, fila, columna+1, 0]
             else:
                 word = word+linea[columna]
                 columna = columna + 1
         else:
             
-            tokenList.append('Error')
+            tokenList.append(['Error', fila, columna1])
             return [linea, fila, columna, -2]
        
 
@@ -359,7 +359,7 @@ def solve(linea, fila, columna):
             return False
         
 def main(): 
-    file = open('caso.txt', 'r')
+    file = open('./SINTACTICO/caso.txt', 'r')
     flag= True
     fila = 1
 
@@ -372,6 +372,8 @@ def main():
         fila += 1 
 
     file.close
+    
+    return tokenList
 
     """for linea in fileinput.input():
         linea = list(linea)
